@@ -1,0 +1,3 @@
+[submodule "im-protocol"]
+	path = im-protocol
+	url = git@github.com:bluespace-x/im-protocol.git

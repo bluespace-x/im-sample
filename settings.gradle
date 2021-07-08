@@ -1,0 +1,8 @@
+include ':lib-user'
+include ':im-ui'
+include ':lib_comm'
+include ':lib-ui'
+include ':network_sdk'
+include ':im-client'
+include ':app'
+rootProject.name = "IMSample"

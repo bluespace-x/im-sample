@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MessageList">
+        <attr name="dateTextSize" format="dimension|reference" />
+        <attr name="dateTextColor" format="color|reference" />
+        <attr name="dateFormat" format="string|reference" />
+        <attr name="datePaddingLeft" format="dimension|reference" />
+        <attr name="datePaddingTop" format="dimension|reference" />
+        <attr name="datePaddingRight" format="dimension|reference" />
+        <attr name="datePaddingBottom" format="dimension|reference" />
+        <attr name="dateBackgroundColor" format="color|reference" />
+        <attr name="dateCornerRadius" format="dimension|reference" />
+        <attr name="eventTextSize" format="dimension|reference" />
+        <attr name="eventTextColor" format="color|reference" />
+        <attr name="eventPaddingLeft" format="dimension|reference" />
+        <attr name="eventPaddingTop" format="dimension|reference" />
+        <attr name="eventPaddingRight" format="dimension|reference" />
+        <attr name="eventPaddingBottom" format="dimension|reference" />
+        <attr name="eventCornerRadius" format="dimension|reference" />
+        <attr name="eventBackgroundColor" format="color|reference" />
+        <attr name="avatarWidth" format="dimension|reference" />
+        <attr name="avatarHeight" format="dimension|reference" />
+        <attr name="avatarRadius" format="dimension|reference" />
+        <attr name="showSenderDisplayName" format="boolean" />
+        <attr name="showReceiverDisplayName" format="boolean" />
+        <attr name="displayNameTextSize" format="dimension|reference" />
+        <attr name="displayNameTextColor" format="color|reference" />
+        <attr name="displayNamePadding" format="dimension|reference" />
+        <attr name="receiveBubbleDrawable" format="reference" />
+        <attr name="receiveBubbleColor" format="color|reference" />
+        <attr name="receiveBubblePressedColor" format="color|reference" />
+        <attr name="receiveBubbleSelectedColor" format="color|reference" />
+        <attr name="receiveBubblePaddingLeft" format="dimension|reference" />
+        <attr name="receiveBubblePaddingTop" format="dimension|reference" />
+        <attr name="receiveBubblePaddingRight" format="dimension|reference" />
+        <attr name="receiveBubblePaddingBottom" format="dimension|reference" />
+        <attr name="receiveTextColor" format="color|reference" />
+        <attr name="receiveTextSize" format="dimension|reference" />
+        <attr name="sendBubbleDrawable" format="reference" />
+        <attr name="sendBubbleColor" format="color|reference" />
+        <attr name="sendBubblePressedColor" format="color|reference" />
+        <attr name="sendBubbleSelectedColor" format="color|reference" />
+        <attr name="sendBubblePaddingLeft" format="dimension|reference" />
+        <attr name="sendBubblePaddingTop" format="dimension|reference" />
+        <attr name="sendBubblePaddingRight" format="dimension|reference" />
+        <attr name="sendBubblePaddingBottom" format="dimension|reference" />
+        <attr name="sendTextColor" format="color|reference" />
+        <attr name="sendTextSize" format="dimension|reference" />
+        <attr name="bubbleMaxWidth" format="float|reference" />
+        <attr name="sendingProgressDrawable" format="reference" />
+        <attr name="sendingIndeterminateDrawable" format="reference" />
+        <attr name="sendVoiceDrawable" format="reference" />
+        <attr name="receiveVoiceDrawable" format="reference" />
+        <attr name="playSendVoiceAnim" format="reference" />
+        <attr name="playReceiveVoiceAnim" format="reference" />
+        <attr name="lineSpacingExtra" format="dimension|reference" />
+        <attr name="lineSpacingMultiplier" format="float" />
+        <attr name="isOutgoing" format="boolean" />
+        <attr name="bubbleVertexWidth" format="dimension|reference" />
+        <attr name="bubbleHemlineHeight" format="dimension|reference" />
+        <attr name="bubbleVertexY" format="dimension|reference" />
+        <attr name="sendPhotoMsgBg" format="reference" />
+        <attr name="receivePhotoMsgBg" format="reference" />
+        <attr name="photoMessageRadius" format="dimension|reference" />
+        <attr name="videoMessageRadius" format="dimension|reference" />
+        <attr name="videoDurationTextColor" format="color|reference" />
+        <attr name="videoDurationTextSize" format="dimension|reference" />
+    </declare-styleable>
+    <declare-styleable name="PullToRefreshLayout">
+        <attr name="PtrResistance" format="float" />
+        <attr name="PtrRatioHeightToRefresh" format="float" />
+        <attr name="PtrCloseDuration" format="integer" />
+        <attr name="PtrCloseHeaderDuration" format="integer" />
+        <attr name="PtrPullToRefresh" format="boolean" />
+        <attr name="PtrKeepHeaderWhenRefresh" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="RoundTextView">
+        <attr name="cornerRadius" format="dimension|reference" />
+        <attr name="backgroundColor" format="color|reference" />
+    </declare-styleable>
+
+    <style name="ChatHeaderLayout">
+        <item name="android:padding">8dp</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="ChatHeaderTitle">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ChatMessageInfo">
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <style name="aurora_msgitem_date_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
+    <style name="aurora_msgitem_msg_txt_style">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="aurora_msgitem_receive_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="aurora_msgitem_receiver_avatar_style">
+        <item name="android:layout_width">@dimen/aurora_width_msg_avatar</item>
+        <item name="android:layout_height">@dimen/aurora_height_msg_avatar</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:scaleType">fitXY</item>
+    </style>
+
+    <style name="aurora_msgitem_receiver_display_name_style">
+        <item name="android:ems">5</item>
+        <item name="android:layout_marginLeft">3dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">#545454</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:visibility">visible</item>
+    </style>
+
+    <style name="aurora_msgitem_send_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="aurora_msgitem_sender_avatar_style">
+        <item name="android:layout_width">@dimen/aurora_width_msg_avatar</item>
+        <item name="android:layout_height">@dimen/aurora_height_msg_avatar</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_marginRight">8dp</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:scaleType">fitXY</item>
+    </style>
+
+    <style name="aurora_msgitem_sender_display_name_style">
+        <item name="android:ems">5</item>
+        <item name="android:layout_marginRight">3dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">#545454</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:visibility">visible</item>
+    </style>
+</resources>
