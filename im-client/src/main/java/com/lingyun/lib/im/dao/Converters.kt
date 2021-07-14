@@ -36,6 +36,7 @@ class Converters {
         return messageState.name
     }
 
+    @TypeConverter
     fun toMessageState(messageStateValue: String): MessageState {
         return enumValueOf<MessageState>(messageStateValue)
     }

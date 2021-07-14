@@ -42,7 +42,7 @@
             android:label="@string/title_activity_chat"
             android:theme="@style/Theme.IMSample.NoActionBar" />
         <activity
-            android:name=".ui.chat.ChatMainActivity"
+            android:name=".ui.chat.main.ChatMainActivity"
             android:label="@string/title_activity_chat_main" />
         <activity
             android:name=".ui.login.LoginActivity"

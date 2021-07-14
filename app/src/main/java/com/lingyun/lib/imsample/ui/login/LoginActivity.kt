@@ -17,6 +17,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.lingyun.lib.imsample.R
 import com.lingyun.lib.imsample.ui.chat.ChatActivity
+import com.lingyun.lib.imsample.ui.chat.main.ChatMainActivity
 import com.lingyun.lib.network.api.AuthorizationResult
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.coroutines.launch
@@ -141,11 +142,13 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun gotoMainActivity() {
-        val ChatGroupId = GroupId.newBuilder().also {
-            it.id = 10
-            it.idType = GroupIdType.GROUP_TYPE
-        }.build()
-        ChatActivity.launcher(this, ChatGroupId)
+//        val ChatGroupId = GroupId.newBuilder().also {
+//            it.id = 10
+//            it.idType = GroupIdType.GROUP_TYPE
+//        }.build()
+//        ChatActivity.launcher(this, ChatGroupId)
+
+        ChatMainActivity.launcher(this)
     }
 }
 

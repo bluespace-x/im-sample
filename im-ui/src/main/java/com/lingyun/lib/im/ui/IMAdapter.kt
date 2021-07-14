@@ -3,7 +3,9 @@ package com.lingyun.lib.im.ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import java.lang.IllegalArgumentException
@@ -26,7 +28,7 @@ import java.sql.Timestamp
 * limitations under the License.
 */
 class IMAdapter(val messages: List<IMessage>, val inflater: LayoutInflater) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -68,15 +70,59 @@ class IMAdapter(val messages: List<IMessage>, val inflater: LayoutInflater) :
 
         val messageView = lazy { root.findViewById<TextView>(R.id.aurora_tv_msgitem_message) }
         val displayName =
-            lazy { root.findViewById<TextView>(R.id.aurora_tv_msgitem_sender_display_name) }
+                lazy { root.findViewById<TextView>(R.id.aurora_tv_msgitem_sender_display_name) }
         val avatar = lazy { root.findViewById<ImageView>(R.id.aurora_iv_msgitem_avatar) }
         val data = lazy { root.findViewById<TextView>(R.id.aurora_tv_msgitem_date) }
+
+        val progress = lazy { root.findViewById<ProgressBar>(R.id.aurora_pb_msgitem_sending) }
+        val resend = lazy { root.findViewById<ImageButton>(R.id.aurora_ib_msgitem_resend) }
+        val readed = lazy { root.findViewById<TextView>(R.id.aurora_tv_msgitem_read) }
+
 
         fun bindData(message: IMessage.TextMessage) {
             messageView.value.setText(message.message)
             displayName.value.setText(message.user.userName)
             avatar.value.setImageResource(R.drawable.aurora_headicon_default)
             data.value.setText(Timestamp(message.timestamp).toString())
+
+            when (message.messageState) {
+                MessageState.SENDING -> {
+                    progress.value.visibility = View.VISIBLE
+                    resend.value.visibility = View.GONE
+                    readed.value.visibility = View.GONE
+
+                }
+                MessageState.SEND_FAIL -> {
+                    progress.value.visibility = View.GONE
+                    resend.value.visibility = View.VISIBLE
+                    readed.value.visibility = View.GONE
+
+                }
+                MessageState.SEND_SUCCESS -> {
+                    progress.value.visibility = View.GONE
+                    resend.value.visibility = View.GONE
+                    readed.value.visibility = View.GONE
+
+                }
+                MessageState.RECEIVERED -> {
+                    progress.value.visibility = View.GONE
+                    resend.value.visibility = View.GONE
+                    readed.value.visibility = View.GONE
+
+                }
+                MessageState.READED -> {
+                    progress.value.visibility = View.GONE
+                    resend.value.visibility = View.GONE
+                    readed.value.visibility = View.VISIBLE
+                    
+                }
+                MessageState.REVOCATION -> {
+                    progress.value.visibility = View.GONE
+                    resend.value.visibility = View.GONE
+                    readed.value.visibility = View.GONE
+
+                }
+            }
         }
     }
 
@@ -84,7 +130,7 @@ class IMAdapter(val messages: List<IMessage>, val inflater: LayoutInflater) :
 
         val messageView = lazy { root.findViewById<TextView>(R.id.aurora_tv_msgitem_message) }
         val displayName =
-            lazy { root.findViewById<TextView>(R.id.aurora_tv_msgitem_receiver_display_name) }
+                lazy { root.findViewById<TextView>(R.id.aurora_tv_msgitem_receiver_display_name) }
         val avatar = lazy { root.findViewById<ImageView>(R.id.aurora_iv_msgitem_avatar) }
         val data = lazy { root.findViewById<TextView>(R.id.aurora_tv_msgitem_date) }
 

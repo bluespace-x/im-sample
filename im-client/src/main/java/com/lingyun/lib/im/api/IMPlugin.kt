@@ -8,6 +8,7 @@ import com.lingyun.lib.component.plugin.PluginManager
 import com.lingyun.lib.im.dao.IMAppDatabase
 import com.lingyun.lib.network.api.NetworkPlugin
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 /*
 * Created by mc_luo on 7/6/21 11:00 AM.
@@ -30,8 +31,9 @@ class IMPlugin() : AbstractPlugin(CoroutineScope(Dispatchers.IO + SupervisorJob(
 
     lateinit var socketService: IMSocketService
     override suspend fun config(context: PluginContext) {
+        Timber.e("config")
         val application = context.getValue<Application>(Application::class.java.simpleName)
-        val db = Room.databaseBuilder(application, IMAppDatabase::class.java, "db")
+        val db = Room.databaseBuilder(application, IMAppDatabase::class.java, "im-db")
                 .build()
 
         val retrofit = PluginManager.getPlugin(NetworkPlugin::class.java)!!.retrofit
@@ -49,6 +51,6 @@ class IMPlugin() : AbstractPlugin(CoroutineScope(Dispatchers.IO + SupervisorJob(
     }
 
     override fun executeAsync(context: PluginContext): Deferred<Any> = async {
-
+        Timber.e("executeAsync")
     }
 }

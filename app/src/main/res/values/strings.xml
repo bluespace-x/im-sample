@@ -107,4 +107,7 @@
     <string name="title_activity_welcome">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="title_latest_message">Message</string>
+    <string name="title_contact">Contact</string>
 </resources>

@@ -83,33 +83,26 @@ class ChatActivity : AppCompatActivity() {
             }
 
             override fun switchToEmojiMode(): Boolean {
-                TODO("Not yet implemented")
+                return true
             }
         })
     }
 
-    private fun sendChatMessage(text: String) {
-        val user = DefaultUser("14", "疾风", "R.drawable.ic_launcher")
-        val message = IMessage.TextMessage(
-                "1",
-                MessageType.SEND_TEXT,
-                System.currentTimeMillis(),
-                user,
-                message = text,
-                MessageState.SENDING
-        )
-
+    private fun sendChatMessage(text: String) = lifecycleScope.launch {
+        val message = chatViewModel.createTextMsgAsync(text).await()
         imList.add(message)
         mAdapter.notifyDataSetChanged()
-
-        lifecycleScope.launch {
+        try {
+            chatViewModel.sendMessageAsync(message, chatGroupId).await()
+            Timber.e("send messag success:${message}")
+            mAdapter.notifyDataSetChanged()
+        } catch (e: Exception) {
+            Timber.e(e)
             try {
-                chatViewModel.sendMessageAsync(message, chatGroupId).await()
+                mAdapter.notifyDataSetChanged()
             } catch (e: Exception) {
-                Timber.e(e)
             }
         }
-
     }
 
     private fun initMessageList() {
@@ -126,8 +119,10 @@ class ChatActivity : AppCompatActivity() {
                 val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
 
-                val firstCompletelyVisibleItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition()
-                val lastCompletelyVisibleItemPosition = layoutManager.findLastCompletelyVisibleItemPosition()
+                val firstCompletelyVisibleItemPosition =
+                        layoutManager.findFirstCompletelyVisibleItemPosition()
+                val lastCompletelyVisibleItemPosition =
+                        layoutManager.findLastCompletelyVisibleItemPosition()
 
                 if (firstCompletelyVisibleItemPosition != NO_POSITION) {
 

@@ -3,19 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/fm_latest_message">
 
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.lingyun.lib.imsample.ui.chat.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        android:id="@+id/fm_latest_message"
+        android:name="com.lingyun.lib.imsample.ui.chat.main.latest.LatestChatFragment"
+        android:label="@string/title_latest_message"
+        tools:layout="@layout/fragment_latest_chat" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.lingyun.lib.imsample.ui.chat.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:name="com.lingyun.lib.imsample.ui.chat.main.contact.ContactFragment"
+        android:label="@string/title_contact"
+        tools:layout="@layout/fragment_contact_list" />
 
     <fragment
         android:id="@+id/navigation_notifications"

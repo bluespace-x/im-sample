@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.lingyun.lib.component.plugin.PluginManager
 import com.lingyun.lib.imsample.R
 import com.lingyun.lib.imsample.ui.chat.ChatActivity
+import com.lingyun.lib.imsample.ui.chat.main.ChatMainActivity
 import com.lingyun.lib.imsample.ui.login.LoginActivity
 import com.lingyun.lib.user.api.UserPlugin
 import com.lingyun.lib.user.api.UserService
@@ -32,8 +33,8 @@ class WelcomeActivity : AppCompatActivity() {
     private val hideHandler = Handler()
 
     private val permissions = arrayOf(
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        Manifest.permission.READ_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
     )
 
     @SuppressLint("InlinedApi")
@@ -44,12 +45,12 @@ class WelcomeActivity : AppCompatActivity() {
         // and API 19 (KitKat). It is safe to use them, as they are inlined
         // at compile-time and do nothing on earlier devices.
         fullscreenContent.systemUiVisibility =
-            View.SYSTEM_UI_FLAG_LOW_PROFILE or
-                    View.SYSTEM_UI_FLAG_FULLSCREEN or
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                View.SYSTEM_UI_FLAG_LOW_PROFILE or
+                        View.SYSTEM_UI_FLAG_FULLSCREEN or
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
     }
     private val showPart2Runnable = Runnable {
         // Delayed display of UI elements
@@ -102,7 +103,7 @@ class WelcomeActivity : AppCompatActivity() {
             val delayJob = launch { delay(3000) }
 
             val userService = PluginManager.getPlugin(UserPlugin::class.java)!!
-                .getServiceAsync(UserService::class.java).await()
+                    .getServiceAsync(UserService::class.java).await()
             try {
                 userService.me().await()
                 delayJob.join()
@@ -116,11 +117,13 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun gotoMainActivity() {
-        val groupId = GroupId.newBuilder().also {
-            it.id = 10
-            it.idType = GroupIdType.GROUP_TYPE
-        }.build()
-        ChatActivity.launcher(this, groupId)
+//        val groupId = GroupId.newBuilder().also {
+//            it.id = 10
+//            it.idType = GroupIdType.GROUP_TYPE
+//        }.build()
+//        ChatActivity.launcher(this, groupId)
+
+        ChatMainActivity.launcher(this)
         this.finish()
     }
 
@@ -159,8 +162,8 @@ class WelcomeActivity : AppCompatActivity() {
     private fun show() {
         // Show the system bar
         fullscreenContent.systemUiVisibility =
-            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         isFullscreen = true
 
         // Schedule a runnable to display UI elements after a delay

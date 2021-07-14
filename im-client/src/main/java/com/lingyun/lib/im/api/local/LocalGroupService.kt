@@ -48,6 +48,10 @@ class LocalGroupService(val db: IMAppDatabase) {
         return users
     }
 
+    suspend fun saveGroup(group: Group) {
+        groupDao.insertGroup(group)
+    }
+
     suspend fun saveGroupUser(groupUser: GroupUser) {
         groupUserDao.insert(groupUser)
     }
@@ -55,7 +59,6 @@ class LocalGroupService(val db: IMAppDatabase) {
     suspend fun saveGroupUsers(groupUsers: List<GroupUser>) {
         groupUserDao.insertAll(groupUsers)
     }
-
 
 
 }

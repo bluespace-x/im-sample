@@ -17,14 +17,14 @@ package com.lingyun.lib.im.ui
 * limitations under the License.
 */
 sealed class IMessage(
-        open val messageId: String,
+        open var messageId: String,
         open val messageType: MessageType,
         open val timestamp: Long,
         open var messageState: MessageState,
 ) {
 
     data class TextMessage(
-            override val messageId: String,
+            override var messageId: String,
             override val messageType: MessageType,
             override val timestamp: Long,
             val user: IUser,
@@ -33,7 +33,7 @@ sealed class IMessage(
     ) : IMessage(messageId, messageType, timestamp, messageState)
 
     data class ImageMessage(
-            override val messageId: String,
+            override var messageId: String,
             override val messageType: MessageType,
             override val timestamp: Long,
             val user: IUser,
@@ -42,7 +42,7 @@ sealed class IMessage(
     ) : IMessage(messageId, messageType, timestamp, messageState)
 
     data class FileMessage(
-            override val messageId: String,
+            override var messageId: String,
             override val messageType: MessageType,
             override val timestamp: Long,
             val user: IUser,
@@ -51,7 +51,7 @@ sealed class IMessage(
     ) : IMessage(messageId, messageType, timestamp, messageState)
 
     data class VideoMessage(
-            override val messageId: String,
+            override var messageId: String,
             override val messageType: MessageType,
             override val timestamp: Long,
             val user: IUser,
@@ -60,7 +60,7 @@ sealed class IMessage(
     ) : IMessage(messageId, messageType, timestamp, messageState)
 
     data class RadioMessage(
-            override val messageId: String,
+            override var messageId: String,
             override val messageType: MessageType,
             override val timestamp: Long,
             val user: IUser,

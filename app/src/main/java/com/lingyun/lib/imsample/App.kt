@@ -3,19 +3,20 @@ package com.lingyun.lib.imsample
 import android.app.Application
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
-import android.util.Log
 import com.lingyun.lib.component.plugin.PluginContext
 import com.lingyun.lib.component.plugin.PluginManager
 import com.lingyun.lib.im.IMConfig
-import com.lingyun.lib.imsample.plugin.IMPlugin
+import com.lingyun.lib.im.api.IMPlugin
+import com.lingyun.lib.im.api.IMSocketService
 import com.lingyun.lib.network.api.NetworkPlugin
+import com.lingyun.lib.network.api.OauthService
 import com.lingyun.lib.user.api.UserPlugin
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 import timber.log.Timber
-
 import timber.log.Timber.DebugTree
-
-
-
 
 
 /*
@@ -97,7 +98,32 @@ class App : Application() {
 
         PluginManager.checkCloseCircle()
         PluginManager.optimizationHierarchy()
-        Log.e("Plugin", PluginManager.printNode())
+        Timber.e(PluginManager.printNode())
         PluginManager.startPlugin(pluginContext)
+
+//        GlobalScope.launch {
+//            val oauthService = networkPlugin.getServiceAsync(OauthService::class.java).await()
+//
+//            val tokenInfo = oauthService.awaitOauthTokenAvail()
+//            IMConfig.userToken = tokenInfo.accessToken
+//
+//            val socketService = imSocketPlugin.getServiceAsync(IMSocketService::class.java).await()
+//            socketService.startServiceAsync().await()
+//        }
+
+        GlobalScope.launch {
+            val oauthService = networkPlugin.getServiceAsync(OauthService::class.java).await()
+            val socketService = imSocketPlugin.getServiceAsync(IMSocketService::class.java).await()
+
+            oauthService.subscribeOauthTokenInfo().collect {
+                IMConfig.userToken = it.accessToken
+                if (!it.isAccessTokenAvail()) {
+                    socketService.stopServiceAsync().await()
+                } else {
+                    socketService.startServiceAsync()
+                }
+            }
+
+        }
     }
 }

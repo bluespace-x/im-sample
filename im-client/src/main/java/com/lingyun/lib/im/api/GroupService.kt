@@ -59,42 +59,40 @@ class GroupService(val retrofit: Retrofit, val db: IMAppDatabase) : CoroutineSco
         }
     }
 
-    fun getGroup(groupId: Long): Deferred<Flow<Result<Group>>> = async {
-        return@async flow<Result<Group>> {
-            val localGroup = localGroupService.getGroupByGroupId(groupId)
-            if (localGroup != null) {
-                emit(Result.success(localGroup))
-            }
+    fun getGroupAsync(groupId: Long): Deferred<Result<Group>> = async {
+        val localGroup = localGroupService.getGroupByGroupId(groupId)
+        if (localGroup != null) {
+            return@async Result.success(localGroup)
+        }
 
-            try {
-                val groupResponse = remoteGroupService.getGroup(groupId)
-                if (groupResponse.isSuccess() && groupResponse.result != null) {
-                    emit(Result.success(groupResponse.result!!))
-                } else {
-                    emit(Result.failure(Resources.NotFoundException()))
-                }
-            } catch (e: Exception) {
-                emit(Result.failure(e))
+        try {
+            val groupResponse = remoteGroupService.getGroup(groupId)
+            if (groupResponse.isSuccess() && groupResponse.result != null) {
+                val group = groupResponse.result!!
+                localGroupService.saveGroup(group)
+                return@async (Result.success(group))
+            } else {
+                return@async (Result.failure(Resources.NotFoundException()))
             }
-
+        } catch (e: Exception) {
+            return@async (Result.failure(e))
         }
     }
 
-    fun myGroups(myUserId: Long): Deferred<Flow<Result<List<Group>>>> = async {
-        return@async flow<Result<List<Group>>> {
-            val localGroups = localGroupService.findAllGroupByUserId(myUserId)
-            emit(Result.success(localGroups))
+    fun myGroups(myUserId: Long): Deferred<Result<List<Group>>> = async {
 
-            try {
-                val response = remoteGroupService.myGroups()
-                if (response.isSuccess() && response.result != null) {
-                    emit(Result.success(response.result!!))
-                } else {
-                    emit(Result.failure(Resources.NotFoundException()))
-                }
-            } catch (e: java.lang.Exception) {
-                emit(Result.failure(e))
+        val localGroups = localGroupService.findAllGroupByUserId(myUserId)
+        if (localGroups.isNotEmpty()) return@async (Result.success(localGroups))
+
+        try {
+            val response = remoteGroupService.myGroups()
+            if (response.isSuccess() && response.result != null) {
+                return@async (Result.success(response.result!!))
+            } else {
+                return@async (Result.failure(Resources.NotFoundException()))
             }
+        } catch (e: java.lang.Exception) {
+            return@async (Result.failure(e))
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.lingyun.lib.im.dao.model
 
 import androidx.room.*
+import com.google.gson.annotations.SerializedName
 import java.sql.Date
 
 /*
@@ -20,10 +21,13 @@ import java.sql.Date
 * limitations under the License.
 */
 @Entity(
-    tableName = "im_message"
+        tableName = "im_message", indices = [Index("seq_id")]
 )
 class Message : BaseEntity() {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    @SerializedName("local_id")
+    var id: Long? = null
+
     @ColumnInfo(name = "seq_id")
     var seqId: Long = -1L
 

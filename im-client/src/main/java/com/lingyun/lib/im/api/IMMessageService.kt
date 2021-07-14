@@ -49,6 +49,10 @@ class IMMessageService(val retrofit: Retrofit, val db: IMAppDatabase) : Coroutin
         localService.getLatestGroupMessages(ownerId)
     }
 
+    fun loadLatestMessageFlow(ownerId: Long) = async {
+        localService.getLatestMessageFlow(ownerId)
+    }
+
     fun loadMessageByGroupIdAndCreateTimeBefore(ownerId: Long, groupId: Long, groupIdType: Int, createTimeBefore: Long, limit: Int): Deferred<Result<List<Message>>> = async {
         val localMsg = localService.getMessageByGroupIdAndCreateTimeBefore(ownerId, groupId, groupIdType, createTimeBefore, limit)
         if (localMsg.isNotEmpty()) return@async Result.success(localMsg)
@@ -77,7 +81,7 @@ class IMMessageService(val retrofit: Retrofit, val db: IMAppDatabase) : Coroutin
                 revocationDate)
     }
 
-    fun getMessageFlow(seqId: Long): Deferred<Flow<Message>> = async {
+    fun getMessageFlow(seqId: Long): Deferred<Flow<Message?>> = async {
         return@async localService.getMessageFlow(seqId)
     }
 }

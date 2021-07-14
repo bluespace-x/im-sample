@@ -4,6 +4,7 @@ import androidx.room.*
 import com.lingyun.lib.im.dao.model.Message
 import com.lingyun.lib.im.dao.model.MessageState
 import kotlinx.coroutines.flow.Flow
+import proto.message.GroupIdType
 import proto.message.MessageStatus
 import java.sql.Date
 
@@ -30,7 +31,7 @@ interface MessageDao {
     suspend fun insertMessage(imMsg: Message)
 
     @Update
-    suspend fun updateMessage(imMsg: Message)
+    suspend fun updateMessage(imMsg: Message): Int
 
     @Query("update im_message set receiver_count =:receiverCount and have_read_count = :haveReadCount and revocation_time =:revocationTime where seq_id =:seqId")
     suspend fun updateMsgStatus(
@@ -38,22 +39,26 @@ interface MessageDao {
             receiverCount: Int,
             haveReadCount: Int,
             revocationTime: Date?
-    )
+    ): Int
 
     @Query("select * from im_message where seq_id = :seqId")
-    suspend fun getMessageFlow(seqId: Long): Flow<Message>
+    fun getMessageFlow(seqId: Long): Flow<Message?>
 
     @Query("update im_message set message_state = :messageState and revocation_time = :revocationTime where seq_id = :seqId")
-    suspend fun updateMessageStateAndRevocationTimeBySeqId(seqId: Long, messageState: MessageState, revocationTime: Date)
+    suspend fun updateMessageStateAndRevocationTimeBySeqId(
+            seqId: Long,
+            messageState: MessageState,
+            revocationTime: Date
+    ): Int
 
     @Query("update im_message set message_state = :messageState where seq_id = :seqId")
-    suspend fun updateMessageState(seqId: Long, messageState: MessageState)
+    suspend fun updateMessageState(seqId: Long, messageState: MessageState): Int
 
     @Query("select * from im_message where seq_id = :seqId")
     suspend fun getMessageBySeqId(seqId: Long): Message?
 
     @Query("select count(seq_id) from im_message where owner_id = :ownerId AND message_state = :msgState order by create_time")
-    suspend fun selectCountByOwnerIdAndMessageState(ownerId: Long, msgState: MessageState)
+    suspend fun selectCountByOwnerIdAndMessageState(ownerId: Long, msgState: MessageState): Long
 
     @Query("select count(seq_id) from im_message where owner_id = :ownerId AND to_id = :toId AND to_id_type = :toIdType and message_state =:messageState")
     suspend fun selectCountByUserIdAndToIdAndMessageState(
@@ -64,7 +69,11 @@ interface MessageDao {
     ): Long
 
     @Query("select * from im_message where owner_id = :ownerId AND to_id = :toId AND to_id_type = :toIdType")
-    suspend fun getAllMessageByOwnerIdAndToId(ownerId: Long, toId: Long, toIdType: Int): List<Message>
+    suspend fun getAllMessageByOwnerIdAndToId(
+            ownerId: Long,
+            toId: Long,
+            toIdType: Int
+    ): List<Message>
 
     @Query("select * from im_message where owner_id = :ownerId AND to_id = :toId AND to_id_type = :toIdType and create_time > :createTimeAfter")
     suspend fun getAllMessageByOwnerIdAndToIdAndCreateTimeAfter(
@@ -87,8 +96,16 @@ interface MessageDao {
     ): List<Message>
 
     @Query("select * from im_message where owner_id = :ownerId group by to_id and to_id_type order by create_time desc")
-    suspend fun getLatestMessageGroupByToId(ownerId: Long): Flow<List<Message>>
+    fun getLatestMessageGroupByToId(ownerId: Long): List<Message>
+
+    @Query("select * from im_message where owner_id = :ownerId order by create_time desc limit 1 ")
+    fun getLatestMessageFlow(ownerId: Long): Flow<Message?>
 
     @Query("select * from im_message where owner_id = :ownerId AND to_id = :toId AND to_id_type = :toIdType order by create_time desc limit :limit")
-    suspend fun getLatestMessageByOwnerIdAndToIdAndToType(ownerId: Long, toId: Long, toIdType: Int, limit: Int): List<Message>
+    suspend fun getLatestMessageByOwnerIdAndToIdAndToType(
+            ownerId: Long,
+            toId: Long,
+            toIdType: Int,
+            limit: Int
+    ): List<Message>
 }

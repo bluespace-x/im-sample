@@ -2,6 +2,8 @@ package com.lingyun.lib.im.extensions
 
 import com.google.protobuf.util.Timestamps
 import com.lingyun.lib.im.dao.model.Message
+import com.lingyun.lib.im.dao.model.MessageState
+import com.lingyun.lib.im.dao.model.MessageStatus
 import proto.message.*
 import java.sql.Date
 
@@ -33,7 +35,6 @@ fun proto.message.Message.toIMMessage(): Message {
 
 
         it.messageType = messageType.number
-        it.messageStatus = MessageStatus.CREATED.number
 
         when {
             hasTextMsg() -> {

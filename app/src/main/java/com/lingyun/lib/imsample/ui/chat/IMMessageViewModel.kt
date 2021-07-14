@@ -4,19 +4,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lingyun.lib.component.plugin.PluginManager
 import com.lingyun.lib.im.api.IMMessageService
+import com.lingyun.lib.im.api.IMPlugin
+import com.lingyun.lib.im.api.IMSocketService
+import com.lingyun.lib.im.dao.model.Message
 import com.lingyun.lib.im.ui.DefaultUser
 import com.lingyun.lib.im.ui.IMessage
 import com.lingyun.lib.im.ui.MessageState
 import com.lingyun.lib.im.ui.MessageType
-import com.lingyun.lib.im.dao.model.Message
-import com.lingyun.lib.im.api.IMSocketService
-import com.lingyun.lib.imsample.plugin.IMPlugin
 import com.lingyun.lib.user.api.UserPlugin
 import com.lingyun.lib.user.api.UserService
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transform
 import proto.message.*
@@ -62,35 +63,41 @@ class IMMessageViewModel : ViewModel() {
         imService.updateMessageRead(message.messageId.toLong()).await()
 
         val socketService = imSocketServiceDeferred.await()
-
         socketService.sendMessageReadAsync(message.messageId.toLong()).await()
     }
 
+    fun createTextMsgAsync(text: String) = viewModelScope.async {
+        val user = userService.await().userInfo()
+        require(user != null)
 
-    fun sendMessageAsync(message: IMessage, to: GroupId): Deferred<Any> {
-        return viewModelScope.async {
-            when (message) {
-                is IMessage.TextMessage -> {
-                    sendTextMessage(message, to)
-                }
-                is IMessage.FileMessage -> {
+        val iuser = DefaultUser(user.id.toString(), user.userName, user.avatarUrl)
 
-                }
-                is IMessage.ImageMessage -> {
+        val msg = IMessage.TextMessage("-1", MessageType.SEND_TEXT, System.currentTimeMillis(), iuser, text, MessageState.SENDING)
+        msg
+    }
 
-                }
-                is IMessage.RadioMessage -> {
-
-                }
-                is IMessage.VideoMessage -> {
-
-                }
-                else -> {
-                    Timber.e("send unknow message:$message")
-                }
+    fun sendMessageAsync(message: IMessage, to: GroupId): Deferred<Any> = viewModelScope.async {
+        when (message) {
+            is IMessage.TextMessage -> {
+                sendTextMessage(message, to)
             }
+            is IMessage.FileMessage -> {
 
+            }
+            is IMessage.ImageMessage -> {
+
+            }
+            is IMessage.RadioMessage -> {
+
+            }
+            is IMessage.VideoMessage -> {
+
+            }
+            else -> {
+                Timber.e("send unknow message:$message")
+            }
         }
+
     }
 
     fun updateMessageReadedAsync(seqId: Long) = viewModelScope.async {
@@ -101,7 +108,7 @@ class IMMessageViewModel : ViewModel() {
 
     private suspend fun sendTextMessage(message: IMessage.TextMessage, to: GroupId) {
         val userInfo = userService.await().userInfo()!!
-        val imChat = Message().also {
+        val imMsg = Message().also {
             it.fromId = userInfo.id
             it.toId = to.id
             it.toIdType = to.idTypeValue
@@ -113,7 +120,31 @@ class IMMessageViewModel : ViewModel() {
         }
 
         val service = imSocketServiceDeferred.await()
-        service.sendIMMessageAsync(imChat).await()
+        try {
+            val msgOperation = service.sendIMMessageAsync(imMsg).await()
+            if (msgOperation.action == MessageAction.CREATE) {
+                imMsg.messageState = com.lingyun.lib.im.dao.model.MessageState.SEND_SUCCESS
+                message.messageState = MessageState.SEND_SUCCESS
+                message.messageId = imMsg.seqId.toString()
+            } else {
+                imMsg.messageState = com.lingyun.lib.im.dao.model.MessageState.SEND_FAIL
+                message.messageState = MessageState.SEND_FAIL
+            }
+            imMsg.seqId = msgOperation.seqId
+
+
+        } catch (e: Exception) {
+            imMsg.messageState = com.lingyun.lib.im.dao.model.MessageState.SEND_FAIL
+        } finally {
+            val msgService = imMessageServiceDeferred.await()
+            try {
+                msgService.insertMessage(imMsg).await()
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+        }
+
+
     }
 
     suspend fun subscribeMessage(chatGroupId: proto.message.GroupId): Flow<IMessage> {
@@ -148,25 +179,28 @@ class IMMessageViewModel : ViewModel() {
      */
     suspend fun subscribeMessageChanged(messageId: String): Flow<IMessage> {
         val service = imMessageServiceDeferred.await()
-        return service.getMessageFlow(messageId.toLong()).await().map { msg ->
-            when (msg.messageType) {
-                proto.message.MessageType.TEXT_TYPE_VALUE -> {
-                    val user = DefaultUser(msg.fromId.toString(), "---", null)
-                    val imessage: IMessage =
-                            IMessage.TextMessage(
-                                    msg.seqId.toString(),
-                                    MessageType.RECEIVE_TEXT,
-                                    msg.timestamp.time,
-                                    user,
-                                    msg.message,
-                                    messageState = MessageState.RECEIVERED
-                            )
-                    imessage
+        return service.getMessageFlow(messageId.toLong()).await()
+                .filter { it != null }
+                .map { msg ->
+                    require(msg != null)
+                    when (msg.messageType) {
+                        proto.message.MessageType.TEXT_TYPE_VALUE -> {
+                            val user = DefaultUser(msg.fromId.toString(), "---", null)
+                            val imessage: IMessage =
+                                    IMessage.TextMessage(
+                                            msg.seqId.toString(),
+                                            MessageType.RECEIVE_TEXT,
+                                            msg.timestamp.time,
+                                            user,
+                                            msg.message,
+                                            messageState = MessageState.RECEIVERED
+                                    )
+                            imessage
+                        }
+                        else -> {
+                            throw IllegalArgumentException("unsupport this message type:${msg.messageType}")
+                        }
+                    }
                 }
-                else -> {
-                    throw IllegalArgumentException("unsupport this message type:${msg.messageType}")
-                }
-            }
-        }
     }
 }

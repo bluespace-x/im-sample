@@ -60,15 +60,19 @@ class LocalMessageService(val messageDao: MessageDao) {
         return messageDao.getLatestMessageByOwnerIdAndToIdAndToType(ownerId, toId, toIdType, limit)
     }
 
-    suspend fun getLatestGroupMessages(ownerId: Long): Flow<List<Message>> {
+    suspend fun getLatestGroupMessages(ownerId: Long): List<Message> {
         return messageDao.getLatestMessageGroupByToId(ownerId)
+    }
+
+    suspend fun getLatestMessageFlow(ownerId: Long): Flow<Message?> {
+        return messageDao.getLatestMessageFlow(ownerId)
     }
 
     suspend fun getMessageByGroupIdAndCreateTimeBefore(ownerId: Long, groupId: Long, groupIdType: Int, createTimeBefore: Long, limit: Int): List<Message> {
         return messageDao.getAllMessageByOwnerIdAndToIdAndCreateTimeBeforeAndLimit(ownerId, groupId, groupIdType, createTimeBefore, limit)
     }
 
-    suspend fun getMessageFlow(seqId: Long): Flow<Message> {
+    suspend fun getMessageFlow(seqId: Long): Flow<Message?> {
         return messageDao.getMessageFlow(seqId)
     }
 

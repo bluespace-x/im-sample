@@ -79,6 +79,12 @@ class IMSocketService(val imMessageService: IMMessageService) : CoroutineScope b
         connectState == ConnectState.CONNECT_SUCCESS
     }
 
+    fun stopServiceAsync() = async {
+        connectJob?.cancel()
+        imClient?.setConnectListener(null)
+        imClient?.disconnectAsync()?.await()
+    }
+
     fun savePacketAsync(ctx: IChannelContext, packet: Packet): Deferred<Any> {
         return async(start = CoroutineStart.UNDISPATCHED) {
             when {

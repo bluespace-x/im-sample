@@ -36,27 +36,25 @@ class UserService(val retrofit: Retrofit, val userDao: UserDao) : CoroutineScope
     val remoteUserService = RemoteUserService(retrofit)
 
 
-    fun getUserInfo(userId: Long): Deferred<Flow<Result<User>>> = async {
-        return@async flow<Result<User>> {
-            val localUser = localUserService.findUserByUserId(userId)
-            if (localUser != null) {
-                emit(Result.success(localUser))
-            }
+    fun getUserInfoAsync(userId: Long): Deferred<Result<User>> = async {
+        val localUser = localUserService.findUserByUserId(userId)
+        if (localUser != null) {
+            return@async (Result.success(localUser))
+        }
 
-            try {
-                val remoteUserResponse = remoteUserService.userInfo(userId)
-                val result = if (remoteUserResponse.isSuccess()) {
-                    val remoteUser = remoteUserResponse.result!!
-                    localUserService.updateAsync(remoteUser)
+        try {
+            val remoteUserResponse = remoteUserService.userInfo(userId)
+            val result = if (remoteUserResponse.isSuccess()) {
+                val remoteUser = remoteUserResponse.result!!
+                localUserService.updateAsync(remoteUser)
 
-                    Result.success(remoteUserResponse.result!!)
-                } else {
-                    Result.failure(Resources.NotFoundException())
-                }
-                emit(result)
-            } catch (e: Exception) {
-                emit(Result.failure(e))
+                Result.success(remoteUserResponse.result!!)
+            } else {
+                Result.failure(Resources.NotFoundException())
             }
+            return@async (result)
+        } catch (e: Exception) {
+            return@async (Result.failure(e))
         }
     }
 
